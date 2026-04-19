@@ -18,25 +18,25 @@ networks:
      ipam:
         driver: default
         config:
-          - subnet: ${NET_SUBNET:-192.168.8.224/28} #(8.201-8.206, 207)
+          - subnet: ${PROJECT_SUBNET:-192.168.8.224/28} #(8.201-8.206, 207)
      driver_opts:
        com.docker.network.bridge.name: mw_net
 
 services:
     mw.db:
-        image: 'mariadb:10'
+        image: 'mariadb:{MARIADB_VERSION:-lts}'
         container_name: mw.db
         hostname: db
         restart: always
         networks:
           - net
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-            MYSQL_ALLOW_EMPTY_ROOT_PASSWORD: no
-            MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD:-yes}
-            MYSQL_DATABASE: ${MYSQL_DATABASE}
-            MYSQL_USER: ${MYSQL_USER}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: no
+            MARIADB_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD:-yes}
+            MARIADB_DATABASE: ${MYSQL_DATABASE}
+            MARIADB_USER: ${MYSQL_USER}
+            MARIADB_PASSWORD: ${MYSQL_PASSWORD}
             TZ: 'Europe/Amsterdam'
         volumes:
           - db:/var/lib/mysql
@@ -48,8 +48,13 @@ services:
         restart: always
         labels:
           - "traefik.enable=true"
-          - "traefik.http.routers.mw.rule=Host(`${TRAEFIK_FQDN}`)"
-          - "traefik.http.routers.mw.entrypoints=${TRAEFIK_ENTRYPOINT}"
+          - "traefik.docker.network=REVERSE_PROXY"
+          - "traefik.http.routers.${PROJECT}.rule=Host(`${PROJECT_FQDN}`)"
+          - "traefik.http.routers.${PROJECT}.entrypoints=${PROJECT_ENTRYPOINT}"
+          - "traefik.http.routers.${PROJECT}.tls.domains[0].main=${PROJECT_DOMAIN_MAIN}"
+          - "traefik.http.routers.${PROJECT}.tls.domains[0].sans=${PROJECT_DOMAIN_SANS}"
+          - "traefik.http.routers.${PROJECT}.tls.certresolver=${PROJECT_CERT_RESOLVER}"
+          - "traefik.http.services.${PROJECT}.loadbalancer.server.port=80"
         networks:
           - net
         ports:
@@ -67,9 +72,9 @@ services:
             - mw.db
         environment:
            MW_SITE_SERVER: '${MW_SITE_SERVER}'
-           MW_DB_NAME: '${MYSQL_DATABASE:-wiki}'
-           MW_DB_USER: '${MYSQL_USER:-wikiuser}'
-           MW_DB_PASS: '${MYSQL_PASSWORD:-password}'
+           MW_DB_NAME: '${MARIADB_DATABASE:-wiki}'
+           MW_DB_USER: '${MARIADB_USER:-wikiuser}'
+           MW_DB_PASS: '${MARIADB_PASSWORD:-password}'
            PHP_LOG_ERRORS: '${PHP_LOG_ERRORS:-Off}'
            PHP_ERROR_REPORTING: '${PHP_ERROR_REPORTING:-E_ALL & ~E_DEPRECATED & ~E_STRICT}'
            TZ: '${TZ:-Europe/Amsterdam}'

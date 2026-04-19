@@ -13,6 +13,8 @@ volumes:
         driver: local
 
 networks:
+  REVERSE_PROXY:
+    external: true
   net:
      driver: bridge
      ipam:
@@ -56,6 +58,7 @@ services:
           - "traefik.http.routers.${PROJECT}.tls.certresolver=${PROJECT_CERT_RESOLVER}"
           - "traefik.http.services.${PROJECT}.loadbalancer.server.port=80"
         networks:
+          - REVERSE_PROXY
           - net
         ports:
           - ${MW_HOSTPORT:-127.0.0.1:8100}:80

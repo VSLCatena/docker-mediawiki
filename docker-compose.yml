@@ -24,7 +24,7 @@ networks:
 
 services:
     mw.db:
-        image: 'mariadb:{MARIADB_VERSION:-lts}'
+        image: 'mariadb:${MARIADB_VERSION:-lts}'
         container_name: mw.db
         hostname: db
         restart: always

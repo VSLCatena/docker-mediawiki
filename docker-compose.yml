@@ -60,8 +60,6 @@ services:
         networks:
           - REVERSE_PROXY
           - net
-        ports:
-          - ${MW_HOSTPORT:-127.0.0.1:8100}:80
         image: ghcr.io/vslcatena/docker-mediawiki:${MW_VERSION:-lts}
         pull_policy: always
         build:

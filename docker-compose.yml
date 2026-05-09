@@ -60,8 +60,6 @@ services:
         networks:
           - REVERSE_PROXY
           - net
-        ports:
-          - ${MW_HOSTPORT:-127.0.0.1:8100}:80
         image: ghcr.io/vslcatena/docker-mediawiki:${MW_VERSION:-lts}
         pull_policy: always
         build:
@@ -74,13 +72,50 @@ services:
         depends_on:
             - mw.db
         environment:
-           MW_SITE_SERVER: '${MW_SITE_SERVER}'
-           MW_DB_NAME: '${MARIADB_DATABASE:-wiki}'
-           MW_DB_USER: '${MARIADB_USER:-wikiuser}'
-           MW_DB_PASS: '${MARIADB_PASSWORD:-password}'
+           MW_WGDEBUGMODE: '${MW_WGDEBUGMODE}'
+           MW_WGDBSERVER: '${MARIADB_HOST:-db}'
+           MW_WGDBNAME: '${MARIADB_DATABASE:-wiki}'
+           MW_WGDBUSER: '${MARIADB_USER:-wikiuser}'
+           MW_WGDBPASSWORD: '${MARIADB_PASSWORD:-password}'          
+           MW_WGDBPREFIX: '${MW_WGDBPREFIX}'
+           MW_WGDBSSL: '${MW_WGDBSSL:-false}'
+           MW_WGDBTABLEOPTIONS: '${MW_WGDBTABLEOPTIONS}'
+           MW_WGDBTYPE: '${MW_WGDBTYPE}'
+           MW_WGSHAREDTABLES: '${MW_WGSHAREDTABLES}'
            PHP_LOG_ERRORS: '${PHP_LOG_ERRORS:-Off}'
            PHP_ERROR_REPORTING: '${PHP_ERROR_REPORTING:-E_ALL & ~E_DEPRECATED & ~E_STRICT}'
            TZ: '${TZ:-Europe/Amsterdam}'
+           MW_WGSERVER: '${MW_WGSERVER}'
+           MW_WGSITENAME: '${MW_WGSITENAME}'
+           MW_WGMETANAMESPACE: '${MW_WGMETANAMESPACE}'
+           MW_WGAUTHENTICATIONTOKENVERSION: '${MW_WGAUTHENTICATIONTOKENVERSION:-"1"}'
+           MW_WGSECRETKEY: '${MW_WGSECRETKEY}'
+           MW_WGUPGRADEKEY: '${MW_WGUPGRADEKEY}'
+           MW_WGDEFAULTSKIN: '${MW_WGDEFAULTSKIN}'
+           MW_WGDIFF3: '${MW_WGDIFF3}'
+           MW_WGEMAILAUTHENTICATION: '${MW_WGEMAILAUTHENTICATION:-false}'
+           MW_WGEMERGENCYCONTACT: '${MW_WGEMERGENCYCONTACT}'
+           MW_WGENABLEEMAIL: '${MW_WGENABLEEMAIL:-false}'
+           MW_WGENABLEUPLOADS: '${MW_WGENABLEUPLOADS:-false}'
+           MW_WGENABLEUSEREMAIL: '${MW_WGENABLEUSEREMAIL:-false}'
+           MW_WGENOTIFUSERTALK: '${MW_WGENOTIFUSERTALK:-false}'
+           MW_WGENOTIFWATCHLIST: '${MW_WGENOTIFWATCHLIST:-false}'
+           MW_WGIMAGEMAGICKCONVERTCOMMAND: '${MW_WGIMAGEMAGICKCONVERTCOMMAND}'
+           MW_WGLANGUAGECODE: '${MW_WGLANGUAGECODE}'
+           MW_WGLOCALTIMEZONE: '${MW_WGLOCALTIMEZONE}'
+           MW_WGMAINCACHETYPE: '${MW_WGMAINCACHETYPE}'
+           MW_WGMEMCACHEDSERVERS: '${MW_WGMEMCACHEDSERVERS}'
+           MW_WGPASSWORDSENDER: '${MW_WGPASSWORDSENDER}'
+           MW_WGPINGBACK: '${MW_WGPINGBACK}'
+           MW_WGRESOURCEBASEPATH: '${MW_WGRESOURCEBASEPATH}'
+           MW_WGRIGHTSICON: '${MW_WGRIGHTSICON}'
+           MW_WGRIGHTSPAGE: '${MW_WGRIGHTSPAGE}'
+           MW_WGRIGHTSTEXT: '${MW_WGRIGHTSTEXT}'
+           MW_WGRIGHTSURL: '${MW_WGRIGHTSURL}'
+           MW_WGSAFEIPS: '${MW_WGSAFEIPS:-"localhost,127.0.0.1"}'
+           MW_WGSCRIPTPATH: '${MW_WGSCRIPTPATH}'
+           MW_WGUSEIMAGEMAGICK: '${MW_WGUSEIMAGEMAGICK:-true}'
+           MW_WGUSEINSTANTCOMMONS: '${MW_WGUSEINSTANTCOMMONS:-true}'
         volumes:
             - LocalSettings:/var/www/html/conf.d
             - images:/var/www/html/images

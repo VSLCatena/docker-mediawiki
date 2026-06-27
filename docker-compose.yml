@@ -56,6 +56,7 @@ services:
           - "traefik.http.routers.${PROJECT}.tls.domains[0].main=${PROJECT_DOMAIN_MAIN}"
           - "traefik.http.routers.${PROJECT}.tls.domains[0].sans=${PROJECT_DOMAIN_SANS}"
           - "traefik.http.routers.${PROJECT}.tls.certresolver=${PROJECT_CERT_RESOLVER}"
+          - "traefik.http.routers.${PROJECT}.middlewares=${PROJECT_MIDDLEWARES}"
           - "traefik.http.services.${PROJECT}.loadbalancer.server.port=80"
         networks:
           - REVERSE_PROXY
